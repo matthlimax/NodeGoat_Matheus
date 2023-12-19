@@ -1,9 +1,9 @@
 name: Veracode Scan 
 on:
   push:
-    branches: [ teste-branch ]
+    branches: [ master ]
   pull_request:
-    branches: [ teste-branch ]
+    branches: [ master ]
 
 jobs:
 
