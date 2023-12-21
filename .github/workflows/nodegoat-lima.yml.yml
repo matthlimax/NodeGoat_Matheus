@@ -1,31 +1,13 @@
 name: Veracode Scan 
 on:
   push:
-    branches: [ master ]
+    branches: [ master]
   pull_request:
     branches: [ master ]
 
 jobs:
 
-Veracode-SAST-Pipeline-Scan:
-  runs-on: ubuntu-latest
-  container:
-    image: veracode/pipeline-scan:latest
-    options: --user root
-  steps:
-    - name: checkout
-      uses: actions/checkout@master
-# abaixo o código está criando um arquivo zip, depois defindo o que será excluido (-x) e o que será adicionado (-i)
-# após, o código utiliza a ferramenta "java , jar" para executar a verradura no caminho /opt/veracode/pipeline-scan.jar.
-# Toda a varredura é feita utlizando as credenciais fornecidas "VERACODE_ID" e "VERACODE_KEY"
-    - name: scan
-      run: |
-         zip -r uploadToVeracode.zip . -x "*node_modules" "*.git" -i "*.js"  "*.html"  "*.htm"  "*.ts"  "*.tsx"  "*.json"  "*.css"  "*.jsp"  "*.vue"
-          java -jar /opt/veracode/pipeline-scan.jar -vid "${{ secrets.VERACODE_ID }}" -vkey "${{ secrets.VERACODE_KEY }}" -f uploadToVeracode.zip
-    
-    continue-on-error: true
-
-     Veracode-SAST-Policy-Scan:
+  Veracode-SAST-Policy-Scan:
     runs-on: ubuntu-latest
     container:
       image: veracode/api-wrapper-java:latest
@@ -36,3 +18,18 @@ Veracode-SAST-Pipeline-Scan:
         run: |
           zip -r uploadToVeracode.zip . -x "*node_modules" "*.git" -i "*.js"  "*.html"  "*.htm"  "*.ts"  "*.tsx"  "*.json"  "*.css"  "*.jsp"  "*.vue"
           java -jar /opt/veracode/api-wrapper.jar -vid "${{ secrets.VERACODE_ID }}" -vkey "${{ secrets.VERACODE_KEY }}" -action UploadAndScan -createprofile false -appname "NodeGoat.vOutubro" -version "${{ github.run_id }}" -filepath uploadToVeracode.zip
+
+  Veracode-SAST-Pipeline-Scan:
+    runs-on: ubuntu-latest
+    container:
+      image: veracode/pipeline-scan:latest
+      options: --user root
+    steps:
+      - name: checkout
+        uses: actions/checkout@master
+          
+      - name: scan 
+        run: |
+          zip -r uploadToVeracode.zip . -x "*node_modules" "*.git" -i "*.js"  "*.html"  "*.htm"  "*.ts"  "*.tsx"  "*.json"  "*.css"  "*.jsp"  "*.vue"
+          java -jar /opt/veracode/pipeline-scan.jar -vid "${{ secrets.VERACODE_ID }}" -vkey "${{ secrets.VERACODE_KEY }}" -f uploadToVeracode.zip
+    continue-on-error: true
