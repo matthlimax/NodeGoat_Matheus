@@ -27,7 +27,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@master
-          
       - name: scan 
         run: |
           zip -r uploadToVeracode.zip . -x "*node_modules" "*.git" -i "*.js"  "*.html"  "*.htm"  "*.ts"  "*.tsx"  "*.json"  "*.css"  "*.jsp"  "*.vue"
